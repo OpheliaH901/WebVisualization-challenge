@@ -1,7 +1,7 @@
 // FUNCTION #1 of 5
 function buildCharts(selectedPatientID) {
     d3.json("samples.json").then(data => {
-        console.log(data)
+        // console.log(data)
 
         // filtering; Metadata is for gauge 
         // Samples is for bar&bubble
@@ -15,68 +15,69 @@ function buildCharts(selectedPatientID) {
 
         let filteredSamples = samples.filter(patient=>patient.id==selectedPatientID)
         let selectedPatientSamples = filteredSamples[0]
-        console.log(selectedPatientSamples)
+        // console.log(selectedPatientSamples)
 
-        // Plotly.newPlot("barDiv", barData, barLayout)
+        // BAR
 
-        let trace1 = {
-            x: ['Feature A', 'Feature B', 'Feature C', 'Feature D', 'Feature E'],
-            y: [20, 14, 23, 25, 22],
+        let barTrace = {
+            x: selectedPatientSamples.sample_values.slice(0,10).reverse(),
+            y: selectedPatientSamples.otu_ids.slice(0,10).map(otu_id => `OTU #${otu_id}`).reverse(),
+            text: selectedPatientSamples.otu_labels.slice(0,10).reverse(),
             marker: {
-                color: ['rgba(204,204,204,1)', 'rgba(222,45,38,0.8)', 'rgba(204,204,204,1)', 'rgba(204,204,204,1)', 'rgba(204,204,204,1)']
             },
-            type: 'bar'
+            type: 'bar',
+            orientation: 'h',
         };
 
-        let data = [trace1];
+        let barData = [barTrace];
 
-        let layout = {
-            title: 'Least Used Feature'
+        let barLayout = {
+            title: "Top 10 Most Common Bacteria in Patient's Belly-Button"
         };
 
-        Plotly.newPlot('barDiv', data, layout);
+        Plotly.newPlot('barDiv', barData, barLayout);
 
 
-        // Plotly.newPlot("bubbleDiv", bubbleData, bubbleLayout)
+        // BUBBLE
 
-        let trace1 = {
-            x: otu_ids,
-            y: sample_values,
-            text: otu_labels,
+        let bubbleTrace = {
+            x: selectedPatientSamples.otu_ids,
+            y: selectedPatientSamples.sample_values,
+            text:selectedPatientSamples.otu_labels,
             mode: 'markers',
             marker: {
-                color: ['rgb(93, 164, 214)', 'rgb(255, 144, 14)', 'rgb(44, 160, 101)', 'rgb(255, 65, 54)'],
-                size: [40, 60, 80, 100]
+                color: selectedPatientSamples.otu_ids,
+                size: selectedPatientSamples.sample_values,
             }
         };
 
-        let data = [trace1];
+        let bubbleData = [bubbleTrace];
 
-        let layout = {
+        let bubbleLayout = {
             title: 'Bubble Chart Hover Text',
             showlegend: false,
             height: 600,
-            width: 600
+            width: 1200
         };
 
-        Plotly.newPlot('bubbleDiv', data, layout);
+        Plotly.newPlot('bubbleDiv', bubbleData, bubbleLayout);
 
-        // Plotly.newPlot("gaugeDiv", gaugeData, gaugeLayout)
+        // GAUGE
 
-        var data = [
+        let gaugeData = [
             {
                 domain: { x: [0, 1], y: [0, 1] },
-                value: 450,
-                title: { text: "Speed" },
+                value: selectedPatientMetadata.wfreq,
+                title: { text: "Patient Washing Frequency per Week" },
                 type: "indicator",
                 mode: "gauge+number",
                 delta: { reference: 400 },
-                gauge: { axis: { range: [null, 500] } }
+                gauge: { axis: { range: [null, 10] } }
             }
         ];
 
-        var layout = { width: 600, height: 400 };
-        Plotly.newPlot('gaugeDiv', data, layout);
+        var gaugeLayout = { width: 600, height: 400 };
+        Plotly.newPlot('gaugeDiv', gaugeData, gaugeLayout);
 
     })
 };
@@ -85,14 +86,23 @@ function buildCharts(selectedPatientID) {
 function populateDemographicInfo(selectedPatientID) {
     var demographicInfoBox = d3.select("#sample-metadata");
     d3.json("samples.json").then(data => {
-        console.log(data)
-        // ADD APPROXIMATELY 3-6 LINE OF CODE
+        // console.log(data)
+        demographicInfoBox.html("")
+        let metadata = data.metadata
+        // one line for loop. list with one object in it
+        let filteredMetadata = metadata.filter(patient=>patient.id==selectedPatientID)
+        let selectedPatientMetadata = filteredMetadata[0]
+        console.log(selectedPatientMetadata)
+        Object.entries(selectedPatientMetadata).forEach(([key, value]) => {
+            demographicInfoBox.append('li').text(`${key}: ${value}`);
+        })
+        
     })
 }
 
 // FUNCTION #3 of 5; connected to the drop down
 function optionChanged(selectedPatientID) {
-    console.log(selectedPatientID);
+    // console.log(selectedPatientID);
     buildCharts(selectedPatientID);
     populateDemographicInfo(selectedPatientID);
 }
