@@ -32,7 +32,7 @@ function buildCharts(selectedPatientID) {
         let barData = [barTrace];
 
         let barLayout = {
-            title: "Top 10 Most Common Bacteria in Patient's Belly-Button"
+            title: "Top 10 Most Common Bacteria in Belly-Button"
         };
 
         Plotly.newPlot('barDiv', barData, barLayout);
