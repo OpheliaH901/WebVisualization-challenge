@@ -2,11 +2,24 @@
 function buildCharts(selectedPatientID) {
     d3.json("samples.json").then(data => {
         console.log(data)
+
+        // filtering; Metadata is for gauge 
+        // Samples is for bar&bubble
+        let metadata = data.metadata
+        let samples = data.samples
         
-        // ADD APPROXIMATELY 50 LINES OF CODE
+        // one line for loop. list with one object in it
+        let filteredMetadata = metadata.filter(patient=>patient.id==selectedPatientID)
+        let selectedPatientMetadata = filteredMetadata[0]
+        console.log(selectedPatientMetadata)
+
+        let filteredSamples = samples.filter(patient=>patient.id==selectedPatientID)
+        let selectedPatientSamples = filteredSamples[0]
+        console.log(selectedPatientSamples)
+
         // Plotly.newPlot("barDiv", barData, barLayout)
 
-        var trace1 = {
+        let trace1 = {
             x: ['Feature A', 'Feature B', 'Feature C', 'Feature D', 'Feature E'],
             y: [20, 14, 23, 25, 22],
             marker: {
@@ -15,9 +28,9 @@ function buildCharts(selectedPatientID) {
             type: 'bar'
         };
 
-        var data = [trace1];
+        let data = [trace1];
 
-        var layout = {
+        let layout = {
             title: 'Least Used Feature'
         };
 
@@ -26,10 +39,10 @@ function buildCharts(selectedPatientID) {
 
         // Plotly.newPlot("bubbleDiv", bubbleData, bubbleLayout)
 
-        var trace1 = {
-            x: [1, 2, 3, 4],
-            y: [10, 11, 12, 13],
-            text: ['A<br>size: 40', 'B<br>size: 60', 'C<br>size: 80', 'D<br>size: 100'],
+        let trace1 = {
+            x: otu_ids,
+            y: sample_values,
+            text: otu_labels,
             mode: 'markers',
             marker: {
                 color: ['rgb(93, 164, 214)', 'rgb(255, 144, 14)', 'rgb(44, 160, 101)', 'rgb(255, 65, 54)'],
@@ -37,9 +50,9 @@ function buildCharts(selectedPatientID) {
             }
         };
 
-        var data = [trace1];
+        let data = [trace1];
 
-        var layout = {
+        let layout = {
             title: 'Bubble Chart Hover Text',
             showlegend: false,
             height: 600,
@@ -77,7 +90,7 @@ function populateDemographicInfo(selectedPatientID) {
     })
 }
 
-// FUNCTION #3 of 5
+// FUNCTION #3 of 5; connected to the drop down
 function optionChanged(selectedPatientID) {
     console.log(selectedPatientID);
     buildCharts(selectedPatientID);
@@ -86,9 +99,9 @@ function optionChanged(selectedPatientID) {
 
 // FUNCTION #4 of 5
 function populateDropdown() {
-    var dropdown = d3.select("#selDataset")
+    let dropdown = d3.select("#selDataset")
     d3.json("samples.json").then(data => {
-        var patientIDs = data.names;
+        let patientIDs = data.names;
         patientIDs.forEach(patientID => {
             dropdown.append("option").text(patientID).property("value", patientID)
         })
