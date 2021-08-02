@@ -25,6 +25,7 @@ function buildCharts(selectedPatientID) {
             y: selectedPatientSamples.otu_ids.slice(0,10).map(otu_id => `OTU #${otu_id}`).reverse(),
             text: selectedPatientSamples.otu_labels.slice(0,10).reverse(),
             marker: {
+                color: 'brown'
             },
             type: 'bar',
             orientation: 'h',
@@ -34,12 +35,12 @@ function buildCharts(selectedPatientID) {
 
         let barLayout = {
             title: "Top 10 Most Common Bacteria in Belly-Button",
-            // margin: {
-            //     l: 90,
-            //     r: 90,
-            //     t: 90,
-            //     b: 90
-            //   }
+            margin: {
+                l: 90,
+                r: 90,
+                t: 90,
+                b: 90
+              }
         };
 
         Plotly.newPlot('barDiv', barData, barLayout);
@@ -83,7 +84,7 @@ function buildCharts(selectedPatientID) {
             }
         ];
 
-        var gaugeLayout = { width: 600, height: 400 };
+        let gaugeLayout = { width: 600, height: 400 };
         Plotly.newPlot('gaugeDiv', gaugeData, gaugeLayout);
 
     })
